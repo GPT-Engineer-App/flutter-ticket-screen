@@ -1,54 +1,56 @@
 import React, { useState } from "react";
-import { Box, VStack, HStack, Text, Heading, Button, Input, Select, Divider, Image } from "@chakra-ui/react";
-import { FaPlus, FaMinus } from "react-icons/fa";
+import { Box, VStack, Text, Heading, Button, Input, Select, Textarea } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const TicketScreen = () => {
-  const [numTickets, setNumTickets] = useState(1);
-  const [ticketType, setTicketType] = useState("general");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("low");
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleIncrement = () => {
-    setNumTickets(numTickets + 1);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log("Submitted ticket:", { title, description, priority });
+    setSubmitted(true);
   };
 
-  const handleDecrement = () => {
-    if (numTickets > 1) {
-      setNumTickets(numTickets - 1);
-    }
-  };
-
-  const handleTicketTypeChange = (event) => {
-    setTicketType(event.target.value);
-  };
+  if (submitted) {
+    return (
+      <Box maxWidth="400px" margin="auto" padding={4}>
+        <VStack spacing={6} align="stretch">
+          <Heading size="xl" textAlign="center">
+            Ticket Submitted
+          </Heading>
+          <Text>Your ticket has been successfully submitted.</Text>
+          <Button as={Link} to="/" colorScheme="blue" size="lg">
+            Back to Main Page
+          </Button>
+        </VStack>
+      </Box>
+    );
+  }
 
   return (
     <Box maxWidth="400px" margin="auto" padding={4}>
       <VStack spacing={6} align="stretch">
         <Heading size="xl" textAlign="center">
-          Ticket Purchase
+          Submit a Ticket
         </Heading>
-        <Image src="https://images.unsplash.com/photo-1515139372923-c923c9e9a18c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxjb25jZXJ0JTIwdGlja2V0c3xlbnwwfHx8fDE3MTI2NTIyNDN8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Ticket" />
-        <HStack justify="space-between">
-          <Text fontSize="lg">Number of Tickets:</Text>
-          <HStack>
-            <Button onClick={handleDecrement}>
-              <FaMinus />
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4} align="stretch">
+            <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+            <Textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+            <Select value={priority} onChange={(e) => setPriority(e.target.value)}>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </Select>
+            <Button type="submit" colorScheme="blue" size="lg">
+              Submit Ticket
             </Button>
-            <Input type="number" value={numTickets} width="60px" textAlign="center" readOnly />
-            <Button onClick={handleIncrement}>
-              <FaPlus />
-            </Button>
-          </HStack>
-        </HStack>
-        <Select value={ticketType} onChange={handleTicketTypeChange}>
-          <option value="general">General Admission</option>
-          <option value="vip">VIP</option>
-          <option value="backstage">Backstage Pass</option>
-        </Select>
-        <Divider />
-        <Text fontSize="lg">Total Price: ${numTickets * (ticketType === "general" ? 50 : ticketType === "vip" ? 100 : 200)}</Text>
-        <Button colorScheme="blue" size="lg">
-          Purchase Tickets
-        </Button>
+          </VStack>
+        </form>
       </VStack>
     </Box>
   );
